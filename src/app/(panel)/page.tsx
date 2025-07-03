@@ -1,9 +1,7 @@
-import { Button } from '@heroui/react'
+import { ThemeSwitcher } from "@/components/switcher";
 
-export default function Home() {
+export default function Page() {
   return (
-    <>
-      <Button color="primary">TESTE</Button>
-    </>
+    <ThemeSwitcher />
   )
-}
+};

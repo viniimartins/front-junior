@@ -1,8 +1,6 @@
 import Image from 'next/image'
 import type { ReactNode } from 'react'
 
-import bgTasks from '@/public/ctasks.jpg'
-
 export default async function AuthenticationLayout({
   children,
 }: {
@@ -12,7 +10,7 @@ export default async function AuthenticationLayout({
     <main className="h-[100vh] w-full overflow-hidden lg:grid lg:grid-cols-2">
       <div className="bg-muted hidden lg:block">
         <Image
-          src={bgTasks}
+          src="/tasks.jpg"
           alt="Image"
           priority
           width="1920"
