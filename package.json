@@ -12,6 +12,7 @@
     "@heroui/react": "^2.8.0-beta.11",
     "@hookform/resolvers": "^5.1.1",
     "@t3-oss/env-nextjs": "^0.13.8",
+    "@tanstack/react-query": "^5.81.5",
     "axios": "^1.10.0",
     "framer-motion": "^12.23.0",
     "jwt-decode": "^4.0.0",

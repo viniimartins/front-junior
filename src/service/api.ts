@@ -1,7 +1,9 @@
 import axios, { AxiosError } from 'axios'
 import { getSession, signOut } from 'next-auth/react'
 
-const baseURL = '/'
+import { env } from '@/env'
+
+const baseURL = env.NEXT_PUBLIC_API_URL
 
 export const api = axios.create({
   baseURL,

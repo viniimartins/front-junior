@@ -66,7 +66,6 @@ export function FormLogin() {
           <Input
             {...field}
             label="Email"
-            labelPlacement="outside"
             type="email"
             isInvalid={!!errors.email}
             errorMessage={errors.email?.message}
@@ -81,7 +80,6 @@ export function FormLogin() {
           <Input
             {...field}
             label="Senha"
-            labelPlacement="outside"
             type="password"
             isInvalid={!!errors.password}
             errorMessage={errors.password?.message}

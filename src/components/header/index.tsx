@@ -16,7 +16,7 @@ export function Header() {
   const { setTheme } = useTheme()
 
   return (
-    <header className="bg-background fixed top-0 z-10 flex h-20 w-full items-center border-b px-8">
+    <header className="bg-background border-divider fixed top-0 z-10 flex h-20 w-full items-center border-b px-8">
       <div className="z-40 mx-auto flex w-full max-w-7xl items-center justify-between">
         <Link href="/">
           <span className="text-2xl font-semibold">TASKS</span>
