@@ -1,23 +1,19 @@
 'use client'
 
-import { LogOut, MoonIcon, SunIcon } from 'lucide-react'
+import {
+  Avatar,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from '@heroui/react'
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 
-import { Button } from '../ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '../ui/dropdown-menu'
-
 export function Header() {
   const { data: session } = useSession()
-
-  const { setTheme, theme } = useTheme()
+  const { setTheme } = useTheme()
 
   return (
     <header className="bg-background fixed top-0 z-10 flex h-20 w-full items-center border-b px-8">
@@ -27,72 +23,47 @@ export function Header() {
         </Link>
 
         <div className="flex gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
-                {session?.user.name[0]}
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
+          <Dropdown>
+            <DropdownTrigger>
+              <Avatar
+                isBordered
+                as="button"
+                className="transition-transform"
+                src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+              />
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Profile Actions" variant="flat">
+              <DropdownItem key="profile" className="h-14 gap-2 text-center">
+                <p className="text-xl font-medium">{session?.user.name}</p>
+                <p className="font-medium">{session?.user.email}</p>
+              </DropdownItem>
 
-            <DropdownMenuContent align="center" className="w-72 py-3">
-              <div className="flex flex-col items-center justify-center space-y-2">
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="h-14 w-14 rounded-full"
-                >
-                  {session?.user.name[0]}
-                  <span className="sr-only">Toggle user menu</span>
-                </Button>
+              <DropdownItem
+                key="light"
+                color="default"
+                onClick={() => setTheme('light')}
+              >
+                Claro
+              </DropdownItem>
 
-                <div className="flex flex-col items-center justify-center gap-3 pb-2">
-                  <div className="flex flex-col items-center gap-1">
-                    <span className="text-base font-medium">
-                      {session?.user.name}
-                    </span>
-                    <span className="text-muted-foreground text-sm">
-                      {session?.user.email}
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <DropdownItem
+                key="dark"
+                color="default"
+                showDivider
+                onClick={() => setTheme('dark')}
+              >
+                Escuro
+              </DropdownItem>
 
-              <DropdownMenuSeparator />
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="flex w-full justify-start gap-2 border-none p-2"
-                  >
-                    <SunIcon className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:hidden dark:scale-0 dark:-rotate-90" />
-                    <MoonIcon className="hidden h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:flex dark:scale-100 dark:rotate-0" />
-                    {theme ? 'Escuro' : 'Claro'}
-                    <span className="sr-only">Toggle theme</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => setTheme('light')}>
-                    Claro
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setTheme('dark')}>
-                    Escuro
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <DropdownMenuSeparator />
-
-              <DropdownMenuItem
-                className="flex items-center gap-2 p-2 font-normal"
+              <DropdownItem
+                key="logout"
+                color="danger"
                 onClick={() => signOut()}
               >
-                <LogOut size={20} />
-                Sair
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                Log Out
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         </div>
       </div>
     </header>

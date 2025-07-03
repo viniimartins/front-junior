@@ -1,7 +1,5 @@
-import { ThemeSwitcher } from "@/components/switcher";
+'use client'
 
 export default function Page() {
-  return (
-    <ThemeSwitcher />
-  )
-};
+  return <div>TESTE</div>
+}

@@ -1,26 +1,30 @@
 'use client'
 
-import { useForm, Controller } from 'react-hook-form'
-import { Form, Input, Button } from '@heroui/react'
-import { z } from 'zod'
+import { addToast, Button, Form, Input } from '@heroui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { signIn } from 'next-auth/react'
+import { Controller, useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 const loginSchema = z.object({
   email: z
     .string({ required_error: 'Este campo é obrigatório.' })
     .email({ message: 'Insira um endereço de e-mail válido.' }),
-  password: z
-    .string({ required_error: 'Este campo é obrigatório.' })
-    .min(8, { message: 'Deve ter pelo menos 8 caracteres.' })
-    .regex(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
-      message:
-        'A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula e um número.',
-    }),
+  password: z.string({ required_error: 'Este campo é obrigatório.' }),
+  // .min(8, { message: 'Deve ter pelo menos 8 caracteres.' })
+  // .regex(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
+  //   message:
+  //     'A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula e um número.',
+  // }),
 })
 
 type ILoginForm = z.infer<typeof loginSchema>
 
 export function FormLogin() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
   const {
     reset,
     handleSubmit,
@@ -30,15 +34,30 @@ export function FormLogin() {
     resolver: zodResolver(loginSchema),
   })
 
-  function onSubmit(data: ILoginForm) {
-    console.log(data)
+  async function onSubmit({ email, password }: ILoginForm) {
+    const res = await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+    })
+
+    const callbackUrl = searchParams.get('callbackUrl')
+
+    if (res?.ok) {
+      return router.replace(callbackUrl || '/')
+    }
+
+    addToast({
+      title: 'Erro de autenticação',
+      description: 'Email ou senha incorretos. Por favor, tente novamente.',
+    })
   }
 
   return (
     <Form
       onSubmit={handleSubmit(onSubmit)}
       onReset={() => reset()}
-      className="w-full max-w-md mx-auto space-y-6"
+      className="mx-auto w-full max-w-md space-y-6"
     >
       <Controller
         name="email"

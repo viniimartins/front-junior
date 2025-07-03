@@ -17,10 +17,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: `Tasks | %s`,
+    template: `Stockly | %s`,
     default: 'Painel',
   },
-  description: 'Organize suas tarefas de forma simples e eficiente.',
+  description: 'Diga adeus à bagunça no estoque com o Stockly.',
 }
 
 export default function RootLayout({
