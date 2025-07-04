@@ -187,7 +187,6 @@ export function Content({ isEditing, data }: Props) {
                     render={({ field }) => (
                       <Textarea
                         label="Descrição"
-                        placeholder="Enter your description"
                         minRows={10}
                         isInvalid={!!errors.description}
                         errorMessage={errors.description?.message}

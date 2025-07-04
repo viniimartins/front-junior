@@ -1,12 +1,5 @@
-import { Button } from '@heroui/react'
-import Link from 'next/link'
+import { Content } from './content'
 
 export default function PanelPage() {
-  return (
-    <div>
-      <Link href="/products">
-        <Button>Acessar meus Produtos</Button>
-      </Link>
-    </div>
-  )
+  return <Content />
 }

@@ -74,10 +74,14 @@ export function Content() {
         <BreadcrumbItem href="/products">Produtos</BreadcrumbItem>
       </Breadcrumbs>
 
-      <div className="flex flex-1 flex-col">
-        <div className="mb-4 ml-auto">
+      <div className="flex flex-1 flex-col gap-8">
+        <div className="flex items-center justify-between">
+          <span className="text-medium font-medium">
+            {products?.meta.total} Produtos
+          </span>
+
           <Link href="/products/create">
-            <Button>Adicionar Produto</Button>
+            <Button color="primary">Adicionar Produto</Button>
           </Link>
         </div>
 
@@ -156,7 +160,7 @@ export function Content() {
         </div>
 
         <div className="mt-6 flex w-full justify-center">
-          {products && (
+          {products && products?.meta.total > 0 && (
             <Pagination
               initialPage={1}
               total={products?.meta.totalPages}

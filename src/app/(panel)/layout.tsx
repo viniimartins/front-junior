@@ -4,7 +4,11 @@ import type { ReactNode } from 'react'
 import { Header } from '@/components/header'
 
 export const metadata: Metadata = {
-  title: 'Painel',
+  title: {
+    template: `Stockly | %s`,
+    default: 'Painel',
+  },
+  description: 'Diga adeus à bagunça no estoque com o Stockly.',
 }
 
 export default function AppLayout({
