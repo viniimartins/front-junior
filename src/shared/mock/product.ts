@@ -1,5 +1,5 @@
 import type { Paginated } from '@/helpers/paginated'
-import type { IProduct } from '@/hooks/query/products/types'
+import type { IProduct } from '@/modules/products/query/products/types'
 
 const mock: IProduct = {
   id: crypto.randomUUID(),

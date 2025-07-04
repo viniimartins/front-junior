@@ -5,7 +5,7 @@ import { queryClient } from '@/lib/react-query'
 import { api } from '@/service/api'
 import type { QueryKeyProps } from '@/types/queryKeyProps'
 
-import type { IProduct } from '../../query/products/types'
+import type { IProduct } from '@/modules/products/model'
 
 interface Params {
   id: IProduct['id']
@@ -29,7 +29,8 @@ export function useDeleteProduct({ queryKey }: QueryKeyProps) {
     },
     onError: () => {
       addToast({
-        title: 'Produto deletado com sucesso',
+        title: 'Opss, algo deu errado!',
+        description: 'Erro ao editar o produto',
       })
     },
   })

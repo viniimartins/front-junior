@@ -24,7 +24,7 @@ export default function Login() {
           <FormLogin />
         </Suspense>
         <div className="mt-4 text-center text-sm">
-          <Link href="/nova-conta" className="underline">
+          <Link href="/create-account" className="underline">
             Nova Conta
           </Link>
         </div>

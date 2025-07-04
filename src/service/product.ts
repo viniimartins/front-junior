@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth'
 
 import type { ApiResponse } from '@/helpers/response'
-import type { IProduct } from '@/hooks/query/products/types'
+import type { IProduct } from '@/modules/products/query/products/types'
 import { authOptions } from '@/lib/nextauth'
 
 import { apiServer } from './apiServer'

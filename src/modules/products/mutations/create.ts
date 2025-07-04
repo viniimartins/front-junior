@@ -2,21 +2,20 @@ import { addToast } from '@heroui/react'
 import { useMutation } from '@tanstack/react-query'
 
 import type { WithoutEntityBaseProperties } from '@/helpers/without-entity-base-properties'
-import type { IProduct } from '@/hooks/query/products/types'
 import { api } from '@/service/api'
+import type { IProduct } from '@/modules/products/model'
 
-type ProductUpdate = Omit<
+type ProductCreate = Omit<
   WithoutEntityBaseProperties<IProduct>,
   'thumbnail'
 > & {
   thumbnail: File | null
 }
 interface Params {
-  id: IProduct['id']
-  product: ProductUpdate
+  product: ProductCreate
 }
 
-async function post({ product, id }: Params) {
+async function post({ product }: Params) {
   const formData = new FormData()
 
   if (product.thumbnail) {
@@ -26,7 +25,7 @@ async function post({ product, id }: Params) {
   formData.append('title', product.title)
   formData.append('description', product.description)
 
-  const { data } = await api.put(`/products/${id}`, formData, {
+  const { data } = await api.post('/products', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -35,18 +34,19 @@ async function post({ product, id }: Params) {
   return data
 }
 
-export function useUpdateProduct() {
+export function useCreateProduct() {
   return useMutation({
-    mutationKey: ['update-product'],
+    mutationKey: ['create-product'],
     mutationFn: post,
     onSuccess: () => {
       addToast({
-        title: 'Produto editado com sucesso',
+        title: 'Produto criado com sucesso',
       })
     },
     onError: () => {
       addToast({
-        title: 'Erro ao editar o produto',
+        title: 'Opss, algo deu errado!',
+        description: 'Erro ao criar o produto',
       })
     },
   })

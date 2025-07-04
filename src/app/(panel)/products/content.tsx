@@ -16,27 +16,38 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Pagination,
   ScrollShadow,
   Skeleton,
 } from '@heroui/react'
 import { Edit, MoreHorizontal, Trash } from 'lucide-react'
 import Link from 'next/link'
 
-import { useDeleteProduct } from '@/hooks/mutations/product/delete'
-import { useGetProducts } from '@/hooks/query/products/get'
-import type { IProduct } from '@/hooks/query/products/types'
+import { useDeleteProduct } from '@/modules/products/mutations/delete'
+import { useGetProducts } from '@/modules/products/query/get'
 import { useModal } from '@/hooks/use-modal'
+import { useCallback, useState } from 'react'
+import type { Paginated } from '@/helpers/paginated'
+import type { IProduct } from '@/modules/products/model'
 
 export function Content() {
   const { actions, isOpen, target } = useModal<IProduct>()
+
+  const [paginatedParams, setPaginatedParams] =
+    useState<Paginated.Params>({
+      pageSize: 9,
+      page: 1,
+    })
+
+  const { page, pageSize } = paginatedParams
 
   const {
     data: products,
     isFetching,
     queryKey,
   } = useGetProducts({
-    page: 1,
-    pageSize: 10,
+    page,
+    pageSize
   })
 
   const { mutate: deleteProduct } = useDeleteProduct({ queryKey })
@@ -47,6 +58,17 @@ export function Content() {
     actions.close()
   }
 
+
+  const onChangePaginatedParams = useCallback(
+    (updatedParams: Partial<Paginated.Params>) => {
+      return setPaginatedParams((state) => ({
+        ...state,
+        ...updatedParams,
+      }))
+    },
+    [],
+  )
+
   return (
     <>
       <Breadcrumbs variant="solid">
@@ -54,74 +76,94 @@ export function Content() {
         <BreadcrumbItem href="/products">Produtos</BreadcrumbItem>
       </Breadcrumbs>
 
-      <div className="ml-auto">
-        <Link href="/products/create">
-          <Button>Adicionar Produto</Button>
-        </Link>
-      </div>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-        {products?.data.length === 0 && (
-          <p className="text-2xl">
-            Nenhum{' '}
-            <span className="text-muted-foreground font-semibold">Produto</span>{' '}
-            encontrado!
-          </p>
-        )}
+      <div className="flex flex-1 flex-col">
+        <div className="ml-auto mb-4">
+          <Link href="/products/create">
+            <Button>Adicionar Produto</Button>
+          </Link>
+        </div>
 
-        {isFetching &&
-          products?.data.map(({ id }) => {
-            return <Skeleton key={id} className="rounded-medium h-96 w-full" />
-          })}
+        <div className="flex-1 flex flex-col gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+            {products?.data.length === 0 && (
+              <p className="text-2xl col-span-full">
+                Nenhum{' '}
+                <span className="text-muted-foreground font-semibold">Produto</span>{' '}
+                encontrado!
+              </p>
+            )}
 
-        {products &&
-          !isFetching &&
-          products.data.map((product, index) => {
-            const { title, description, id } = product
+            {isFetching &&
+              products?.data.map(({ id }) => {
+                return <Skeleton key={id} className="rounded-medium h-96 w-full" />
+              })}
 
-            return (
-              <Card key={index}>
-                <CardHeader className="flex justify-between p-2">
-                  <span className="text-large truncate font-medium">
-                    {title}
-                  </span>
+            {products &&
+              !isFetching &&
+              products.data.map((product, index) => {
+                const { title, description, id } = product
 
-                  <Dropdown>
-                    <DropdownTrigger className="hover:cursor-pointer">
-                      <div className="p-2">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </div>
-                    </DropdownTrigger>
+                return (
+                  <Card key={index}>
+                    <CardHeader className="flex justify-between p-2">
+                      <span className="text-large truncate font-medium">
+                        {title}
+                      </span>
 
-                    <DropdownMenu aria-label="Ações do Produto" variant="flat">
-                      <DropdownItem
-                        key="edit"
-                        className="text-sm"
-                        href={`/products/${id}/edit`}
-                        startContent={
-                          <Edit className="text-default-500 h-4 w-4" />
-                        }
-                      >
-                        Editar
-                      </DropdownItem>
-                      <DropdownItem
-                        key="remove"
-                        className="text-danger text-sm"
-                        onClick={() => actions.open(product)}
-                        startContent={<Trash className="h-4 w-4" />}
-                      >
-                        Excluir
-                      </DropdownItem>
-                    </DropdownMenu>
-                  </Dropdown>
-                </CardHeader>
-                <CardBody className="flex flex-col gap-2 p-2">
-                  <ScrollShadow className="text-small text-primary-foreground h-64 text-start font-normal">
-                    {description}
-                  </ScrollShadow>
-                </CardBody>
-              </Card>
-            )
-          })}
+                      <Dropdown>
+                        <DropdownTrigger className="hover:cursor-pointer">
+                          <div className="p-2">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </div>
+                        </DropdownTrigger>
+
+                        <DropdownMenu aria-label="Ações do Produto" variant="flat">
+                          <DropdownItem
+                            key="edit"
+                            className="text-sm"
+                            href={`/products/${id}/edit`}
+                            startContent={
+                              <Edit className="text-default-500 h-4 w-4" />
+                            }
+                          >
+                            Editar
+                          </DropdownItem>
+                          <DropdownItem
+                            key="remove"
+                            className="text-danger text-sm"
+                            onClick={() => actions.open(product)}
+                            startContent={<Trash className="h-4 w-4" />}
+                          >
+                            Excluir
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </Dropdown>
+                    </CardHeader>
+                    <CardBody className="flex flex-col gap-2 p-2">
+                      <ScrollShadow className="text-small text-primary-foreground h-64 text-start font-normal">
+                        {description}
+                      </ScrollShadow>
+                    </CardBody>
+                  </Card>
+                )
+              })}
+          </div>
+        </div>
+
+        <div className="w-full flex justify-center mt-6">
+          {products && (
+            <Pagination
+              initialPage={1}
+              total={products?.meta.totalPages}
+              isCompact
+              showControls
+              onChange={(newPage) => onChangePaginatedParams({ page: newPage })}
+            />
+          )
+
+          }
+
+        </div>
       </div>
 
       <Modal
