@@ -2,10 +2,9 @@ import { addToast } from '@heroui/react'
 import { useMutation } from '@tanstack/react-query'
 
 import { queryClient } from '@/lib/react-query'
+import type { IProduct } from '@/modules/products/model'
 import { api } from '@/service/api'
 import type { QueryKeyProps } from '@/types/queryKeyProps'
-
-import type { IProduct } from '@/modules/products/model'
 
 interface Params {
   id: IProduct['id']

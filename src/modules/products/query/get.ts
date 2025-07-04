@@ -3,10 +3,9 @@ import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 
 import type { Paginated } from '@/helpers/paginated'
+import type { IProduct } from '@/modules/products/model'
 import { api } from '@/service/api'
 import { ProductMock } from '@/shared/mock/product'
-
-import type { IProduct } from '@/modules/products/model'
 
 async function get(params: Paginated.Params) {
   const { data } = await api.get<Paginated.Response<IProduct>>('/products', {

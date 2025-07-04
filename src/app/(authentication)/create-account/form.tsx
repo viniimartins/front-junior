@@ -1,12 +1,12 @@
 'use client'
 
-import { addToast, Button, Form, Input } from '@heroui/react'
+import { Button, Form, Input } from '@heroui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { signIn } from 'next-auth/react'
+import { LoaderCircle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { LoaderCircle } from 'lucide-react'
+
 import { useCreateUser } from '@/modules/users/mutations/create'
 
 const createAccountSchema = z
@@ -47,11 +47,13 @@ export function FormCreateAccount() {
     resolver: zodResolver(createAccountSchema),
   })
 
-  const { mutate: handleCreateUser, isPending } = useCreateUser()
-
+  const { mutate: handleCreateUser } = useCreateUser()
 
   async function onSubmit({
-    email, name, verifyPassword, password
+    email,
+    name,
+    verifyPassword,
+    password,
   }: ICreateAccountForm) {
     const payload = { email, name, verifyPassword, password }
 
@@ -126,7 +128,12 @@ export function FormCreateAccount() {
         )}
       />
 
-      <Button type="submit" disabled={isSubmitting} color='primary' className="w-full">
+      <Button
+        type="submit"
+        disabled={isSubmitting}
+        color="primary"
+        className="w-full"
+      >
         {isSubmitting && <LoaderCircle size={18} className="animate-spin" />}
         Registrar
       </Button>

@@ -13,8 +13,8 @@ export default function NewAccount() {
       <div className="flex flex-col space-y-2 text-center">
         <h1 className="text-center text-3xl font-bold">Criar Conta</h1>
         <span className="text-muted-foreground text-sm">
-          Cadastre-se para começar a organizar e gerenciar seus produtos de forma
-          eficiente.
+          Cadastre-se para começar a organizar e gerenciar seus produtos de
+          forma eficiente.
         </span>
       </div>
       <div className="mx-auto w-full max-w-md">

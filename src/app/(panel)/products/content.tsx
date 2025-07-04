@@ -22,22 +22,21 @@ import {
 } from '@heroui/react'
 import { Edit, MoreHorizontal, Trash } from 'lucide-react'
 import Link from 'next/link'
+import { useCallback, useState } from 'react'
 
+import type { Paginated } from '@/helpers/paginated'
+import { useModal } from '@/hooks/use-modal'
+import type { IProduct } from '@/modules/products/model'
 import { useDeleteProduct } from '@/modules/products/mutations/delete'
 import { useGetProducts } from '@/modules/products/query/get'
-import { useModal } from '@/hooks/use-modal'
-import { useCallback, useState } from 'react'
-import type { Paginated } from '@/helpers/paginated'
-import type { IProduct } from '@/modules/products/model'
 
 export function Content() {
   const { actions, isOpen, target } = useModal<IProduct>()
 
-  const [paginatedParams, setPaginatedParams] =
-    useState<Paginated.Params>({
-      pageSize: 9,
-      page: 1,
-    })
+  const [paginatedParams, setPaginatedParams] = useState<Paginated.Params>({
+    pageSize: 9,
+    page: 1,
+  })
 
   const { page, pageSize } = paginatedParams
 
@@ -47,7 +46,7 @@ export function Content() {
     queryKey,
   } = useGetProducts({
     page,
-    pageSize
+    pageSize,
   })
 
   const { mutate: deleteProduct } = useDeleteProduct({ queryKey })
@@ -57,7 +56,6 @@ export function Content() {
 
     actions.close()
   }
-
 
   const onChangePaginatedParams = useCallback(
     (updatedParams: Partial<Paginated.Params>) => {
@@ -77,25 +75,29 @@ export function Content() {
       </Breadcrumbs>
 
       <div className="flex flex-1 flex-col">
-        <div className="ml-auto mb-4">
+        <div className="mb-4 ml-auto">
           <Link href="/products/create">
             <Button>Adicionar Produto</Button>
           </Link>
         </div>
 
-        <div className="flex-1 flex flex-col gap-6">
+        <div className="flex flex-1 flex-col gap-6">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             {products?.data.length === 0 && (
-              <p className="text-2xl col-span-full">
+              <p className="col-span-full text-2xl">
                 Nenhum{' '}
-                <span className="text-muted-foreground font-semibold">Produto</span>{' '}
+                <span className="text-muted-foreground font-semibold">
+                  Produto
+                </span>{' '}
                 encontrado!
               </p>
             )}
 
             {isFetching &&
               products?.data.map(({ id }) => {
-                return <Skeleton key={id} className="rounded-medium h-96 w-full" />
+                return (
+                  <Skeleton key={id} className="rounded-medium h-96 w-full" />
+                )
               })}
 
             {products &&
@@ -117,7 +119,10 @@ export function Content() {
                           </div>
                         </DropdownTrigger>
 
-                        <DropdownMenu aria-label="Ações do Produto" variant="flat">
+                        <DropdownMenu
+                          aria-label="Ações do Produto"
+                          variant="flat"
+                        >
                           <DropdownItem
                             key="edit"
                             className="text-sm"
@@ -150,7 +155,7 @@ export function Content() {
           </div>
         </div>
 
-        <div className="w-full flex justify-center mt-6">
+        <div className="mt-6 flex w-full justify-center">
           {products && (
             <Pagination
               initialPage={1}
@@ -159,10 +164,7 @@ export function Content() {
               showControls
               onChange={(newPage) => onChangePaginatedParams({ page: newPage })}
             />
-          )
-
-          }
-
+          )}
         </div>
       </div>
 

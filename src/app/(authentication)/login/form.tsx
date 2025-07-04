@@ -2,22 +2,23 @@
 
 import { addToast, Button, Form, Input } from '@heroui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { LoaderCircle } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { signIn } from 'next-auth/react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { LoaderCircle } from 'lucide-react'
 
 const loginSchema = z.object({
   email: z
     .string({ required_error: 'Este campo é obrigatório.' })
     .email({ message: 'Insira um endereço de e-mail válido.' }),
-  password: z.string({ required_error: 'Este campo é obrigatório.' })
-  .min(8, { message: 'Deve ter pelo menos 8 caracteres.' })
-  .regex(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
-    message:
-      'A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula e um número.',
-  }),
+  password: z
+    .string({ required_error: 'Este campo é obrigatório.' })
+    .min(8, { message: 'Deve ter pelo menos 8 caracteres.' })
+    .regex(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
+      message:
+        'A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula e um número.',
+    }),
 })
 
 type ILoginForm = z.infer<typeof loginSchema>
@@ -88,7 +89,12 @@ export function FormLogin() {
         )}
       />
 
-      <Button type="submit" disabled={isSubmitting} color='primary' className="w-full">
+      <Button
+        type="submit"
+        disabled={isSubmitting}
+        color="primary"
+        className="w-full"
+      >
         {isSubmitting && <LoaderCircle size={18} className="animate-spin" />}
         Login
       </Button>

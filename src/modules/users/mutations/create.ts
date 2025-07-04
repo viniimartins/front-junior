@@ -1,7 +1,8 @@
+import { addToast } from '@heroui/react'
 import { useMutation } from '@tanstack/react-query'
 
+import type { ICreateUser } from '@/modules/users/model'
 import { api } from '@/service/api'
-import { addToast } from '@heroui/react'
 
 export interface CreateUser {
   user: ICreateUser
@@ -27,7 +28,7 @@ export function useCreateUser() {
     onError: () => {
       addToast({
         title: 'Opss, algo deu errado!',
-        description: 'Erro ao registrar usuario.'
+        description: 'Erro ao registrar usuario.',
       })
     },
   })

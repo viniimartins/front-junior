@@ -17,9 +17,9 @@ import { useEffect, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import type { IProduct } from '@/modules/products/model'
 import { useCreateProduct } from '@/modules/products/mutations/create'
 import { useUpdateProduct } from '@/modules/products/mutations/update'
-import type { IProduct } from '@/modules/products/model'
 
 const baseProductSchema = z.object({
   title: z.string({ required_error: 'Este campo é obrigatório.' }),

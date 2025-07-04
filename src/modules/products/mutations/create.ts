@@ -2,8 +2,8 @@ import { addToast } from '@heroui/react'
 import { useMutation } from '@tanstack/react-query'
 
 import type { WithoutEntityBaseProperties } from '@/helpers/without-entity-base-properties'
-import { api } from '@/service/api'
 import type { IProduct } from '@/modules/products/model'
+import { api } from '@/service/api'
 
 type ProductCreate = Omit<
   WithoutEntityBaseProperties<IProduct>,
