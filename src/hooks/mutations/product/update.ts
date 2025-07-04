@@ -5,17 +5,18 @@ import type { WithoutEntityBaseProperties } from '@/helpers/without-entity-base-
 import type { IProduct } from '@/hooks/query/products/types'
 import { api } from '@/service/api'
 
-type ProductCreate = Omit<
+type ProductUpdate = Omit<
   WithoutEntityBaseProperties<IProduct>,
   'thumbnail'
 > & {
   thumbnail: File | null
 }
 interface Params {
-  product: ProductCreate
+  id: IProduct['id']
+  product: ProductUpdate
 }
 
-async function post({ product }: Params) {
+async function post({ product, id }: Params) {
   const formData = new FormData()
 
   if (product.thumbnail) {
@@ -25,7 +26,7 @@ async function post({ product }: Params) {
   formData.append('title', product.title)
   formData.append('description', product.description)
 
-  const { data } = await api.post('/products', formData, {
+  const { data } = await api.put(`/products/${id}`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -34,18 +35,18 @@ async function post({ product }: Params) {
   return data
 }
 
-export function useCreateProduct() {
+export function useUpdateProduct() {
   return useMutation({
-    mutationKey: ['create-product'],
+    mutationKey: ['update-product'],
     mutationFn: post,
     onSuccess: () => {
       addToast({
-        title: 'Produto criado com sucesso',
+        title: 'Produto editado com sucesso',
       })
     },
     onError: () => {
       addToast({
-        title: 'Erro ao criar o produto',
+        title: 'Erro ao editar o produto',
       })
     },
   })

@@ -11,30 +11,48 @@ import {
   Textarea,
 } from '@heroui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Upload } from 'lucide-react'
+import { LoaderCircle, Upload } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { useCreateProduct } from '@/hooks/mutations/product/create'
+import { useUpdateProduct } from '@/hooks/mutations/product/update'
+import type { IProduct } from '@/hooks/query/products/types'
 
-const productSchema = z.object({
+const baseProductSchema = z.object({
   title: z.string({ required_error: 'Este campo é obrigatório.' }),
   description: z.string({ required_error: 'Este campo é obrigatório.' }),
+})
+
+const formProductSchema = baseProductSchema.extend({
   file: z.custom<File>(
     (v) => v instanceof File && v.size > 0,
     'Este campo é obrigatório.',
   ),
 })
 
-type IProductForm = z.infer<typeof productSchema>
+const formEditProductSchema = baseProductSchema.extend({
+  file: z
+    .custom<File>(
+      (v) => v === undefined || (v instanceof File && v.size > 0),
+      'Este campo deve ser um arquivo válido ou pode ser omitido.',
+    )
+    .optional(),
+})
+
+type CreateProductForm = z.infer<typeof formProductSchema>
+type EditProductForm = z.infer<typeof formEditProductSchema>
+
+type IProductForm = CreateProductForm | EditProductForm
 
 interface Props {
   isEditing: boolean
+  data: IProduct | null
 }
 
-export function Content({ isEditing }: Props) {
+export function Content({ isEditing, data }: Props) {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -45,12 +63,16 @@ export function Content({ isEditing }: Props) {
     handleSubmit,
     control,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<IProductForm>({
-    resolver: zodResolver(productSchema),
+    resolver: zodResolver(
+      isEditing ? formEditProductSchema : formProductSchema,
+    ),
   })
 
   const { mutate: handleCreateProduct } = useCreateProduct()
+
+  const { mutate: handleEditProduct } = useUpdateProduct()
 
   function handleUploadClick() {
     fileInputRef.current?.click()
@@ -70,17 +92,44 @@ export function Content({ isEditing }: Props) {
   }
 
   async function onSubmit({ title, description, file }: IProductForm) {
-    const payload = { title, description, thumbnail: file }
+    const payload = { title, description, thumbnail: file ?? null }
 
-    handleCreateProduct(
-      { product: payload },
-      {
-        onSuccess() {
-          router.push('/products')
+    if (!isEditing && file) {
+      handleCreateProduct(
+        { product: payload },
+        {
+          onSuccess() {
+            router.push('/products')
+          },
         },
-      },
-    )
+      )
+    }
+
+    if (isEditing && data) {
+      handleEditProduct(
+        {
+          id: data?.id,
+          product: payload,
+        },
+        {
+          onSuccess() {
+            router.push('/products')
+          },
+        },
+      )
+    }
   }
+
+  useEffect(() => {
+    if (isEditing && data) {
+      reset({
+        title: data.title,
+        description: data.description,
+      })
+
+      setImagePreview(data.thumbnail.url as string)
+    }
+  }, [isEditing, data, reset])
 
   return (
     <>
@@ -96,13 +145,16 @@ export function Content({ isEditing }: Props) {
         <div className="grid flex-1 auto-rows-max gap-4">
           <div className="flex items-center gap-4">
             <h1 className="flex-1 shrink-0 text-xl font-semibold tracking-tight whitespace-nowrap sm:grow-0">
-              Adicionar Produto
+              {isEditing ? 'Editar Produto' : 'Adicionar Produto'}
             </h1>
 
             <div className="ml-auto flex items-center justify-center gap-2">
               <Button color="danger">Descartar</Button>
               <Button type="submit" form="product-form" color="primary">
-                Salvar Produto
+                {isEditing ? 'Editar' : 'Salvar'} Produto
+                {isSubmitting && (
+                  <LoaderCircle className="ml-2 h-4 w-4 animate-spin" />
+                )}
               </Button>
             </div>
           </div>
@@ -121,10 +173,10 @@ export function Content({ isEditing }: Props) {
                     control={control}
                     render={({ field }) => (
                       <Input
-                        {...field}
                         label="Nome"
                         isInvalid={!!errors.title}
                         errorMessage={errors.title?.message}
+                        {...field}
                       />
                     )}
                   />
@@ -134,12 +186,12 @@ export function Content({ isEditing }: Props) {
                     control={control}
                     render={({ field }) => (
                       <Textarea
-                        {...field}
                         label="Descrição"
                         placeholder="Enter your description"
                         minRows={10}
                         isInvalid={!!errors.description}
                         errorMessage={errors.description?.message}
+                        {...field}
                       />
                     )}
                   />

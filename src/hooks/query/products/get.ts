@@ -32,7 +32,6 @@ export function useGetProducts(params: Paginated.Params) {
       addToast({
         title: 'Erro ao carregar produtos',
         description: 'Não foi possível buscar os produtos. Tente novamente.',
-        variant: 'flat',
       })
     }
   }, [isError])

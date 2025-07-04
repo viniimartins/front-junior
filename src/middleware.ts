@@ -10,5 +10,7 @@ export default withAuth({
 })
 
 export const config = {
-  matcher: ['/'],
+  matcher: [
+    '/((?!login|create-account|_next|api|favicon.ico|images|fonts|.*\\.svg$).*)',
+  ],
 }

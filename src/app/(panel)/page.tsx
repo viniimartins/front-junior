@@ -1,7 +1,7 @@
 import { Button } from '@heroui/react'
 import Link from 'next/link'
 
-export default function PamelPage() {
+export default function PanelPage() {
   return (
     <div>
       <Link href="/products">

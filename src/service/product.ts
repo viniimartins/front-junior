@@ -1,11 +1,23 @@
-import type { IProduct } from '@/app/(app)/types'
+import { getServerSession } from 'next-auth'
+
+import type { ApiResponse } from '@/helpers/response'
+import type { IProduct } from '@/hooks/query/products/types'
+import { authOptions } from '@/lib/nextauth'
 
 import { apiServer } from './apiServer'
 
-type Product = Pick<IProduct, 'id'>
+interface Params {
+  id: IProduct['id']
+}
 
-export async function getProduct({ id }: Product) {
-  const data = await apiServer<IProduct>(`/product/${id}`)
+export async function getProduct({ id }: Params) {
+  const session = await getServerSession(authOptions)
 
-  return data
+  const response = await apiServer<ApiResponse<IProduct>>(`/products/${id}`, {
+    headers: {
+      Authorization: `Bearer ${session?.user.token}`,
+    },
+  })
+
+  return response?.data
 }
