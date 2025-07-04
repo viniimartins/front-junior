@@ -12,13 +12,20 @@ import {
 } from '@heroui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Upload } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { useCreateProduct } from '@/hooks/mutations/product/create'
+
 const productSchema = z.object({
-  name: z.string({ required_error: 'Este campo é obrigatório.' }),
+  title: z.string({ required_error: 'Este campo é obrigatório.' }),
   description: z.string({ required_error: 'Este campo é obrigatório.' }),
+  file: z.custom<File>(
+    (v) => v instanceof File && v.size > 0,
+    'Este campo é obrigatório.',
+  ),
 })
 
 type IProductForm = z.infer<typeof productSchema>
@@ -31,14 +38,19 @@ export function Content({ isEditing }: Props) {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const router = useRouter()
+
   const {
     reset,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
   } = useForm<IProductForm>({
     resolver: zodResolver(productSchema),
   })
+
+  const { mutate: handleCreateProduct } = useCreateProduct()
 
   function handleUploadClick() {
     fileInputRef.current?.click()
@@ -53,10 +65,21 @@ export function Content({ isEditing }: Props) {
       setImagePreview(reader.result as string)
     }
     reader.readAsDataURL(file)
+
+    setValue('file', file, { shouldValidate: true })
   }
 
-  async function onSubmit({ name, description }: IProductForm) {
-    console.log(name, description)
+  async function onSubmit({ title, description, file }: IProductForm) {
+    const payload = { title, description, thumbnail: file }
+
+    handleCreateProduct(
+      { product: payload },
+      {
+        onSuccess() {
+          router.push('/products')
+        },
+      },
+    )
   }
 
   return (
@@ -94,14 +117,14 @@ export function Content({ isEditing }: Props) {
               >
                 <div className="space-y-4">
                   <Controller
-                    name="name"
+                    name="title"
                     control={control}
                     render={({ field }) => (
                       <Input
                         {...field}
                         label="Nome"
-                        isInvalid={!!errors.name}
-                        errorMessage={errors.name?.message}
+                        isInvalid={!!errors.title}
+                        errorMessage={errors.title?.message}
                       />
                     )}
                   />
@@ -153,6 +176,11 @@ export function Content({ isEditing }: Props) {
                       onChange={handleImageUpload}
                     />
                   </div>
+                  {errors.file && (
+                    <span className="text-danger text-sm">
+                      {errors.file.message}
+                    </span>
+                  )}
                 </div>
               </Form>
             </CardBody>

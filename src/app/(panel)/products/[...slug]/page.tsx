@@ -34,9 +34,5 @@ export default async function ProductCreateAndEditPage({
 
   const product = id ? await getProduct({ id }) : null
 
-  return (
-    <>
-      <Content isEditing={isEditing} />
-    </>
-  )
+  return <Content isEditing={isEditing} />
 }
