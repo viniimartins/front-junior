@@ -1,11 +1,20 @@
 import type { Paginated } from '@/helpers/paginated'
-import type { IProduct } from '@/modules/products/query/products/types'
+import type { IProduct } from '@/modules/products/model'
 
 const mock: IProduct = {
   id: crypto.randomUUID(),
   title: 'Teste',
   description: 'Teste',
-  thumbnail: null,
+  thumbnail: {
+    id: crypto.randomUUID(),
+    key: 'abc123',
+    mineType: 'image/jpeg',
+    originName: 'stock.jpg',
+    size: 102400,
+    url: '/stock.jpg',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
   updatedAt: new Date(),
   createdAt: new Date(),
 }

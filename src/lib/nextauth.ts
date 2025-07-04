@@ -6,7 +6,9 @@ import { api } from '@/service/api'
 import { DecodedToken } from '@/types/decoded-token'
 
 interface SignIn {
-  [x: string]: any
+  user: {
+    name: string
+  }
   token: string
 }
 
